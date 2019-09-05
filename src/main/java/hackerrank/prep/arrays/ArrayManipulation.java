@@ -14,8 +14,7 @@ public class ArrayManipulation {
       if(head == null){
         head = new Node(start, end, val);
       }else if(end < head.start){
-        Node node = new Node(start, end, val, head);
-        head = node;
+        head = new Node(start, end, val, head);
       }else{
         Node current = head;
         while(start > current.end) {
@@ -26,9 +25,22 @@ public class ArrayManipulation {
           }
           current = current.next;
         }
-        Optional<Node> before = current.getBefore(start, end, val);
+        Node nextNode = current.next;
+        Node before = current.getBefore(start, end, val);
         Node overlap = current.getOverlap(start, end, val);
-        Optional<Node> after = current.getAfter(start, end, val);
+        Node after = current.getAfter(start, end, val);
+        if(before == null){
+          current.copy(overlap);
+        }else{
+          current.copy(before);
+          current.next = overlap;
+        }
+        if(after == null){
+          overlap.next = nextNode;
+        }else{
+          overlap.next = after;
+          after.next = nextNode;
+        }
         }
 
     }
@@ -62,16 +74,22 @@ public class ArrayManipulation {
       return String.format("%s:%s=%s%s",start,end,value,next==null?"":" "+next.toString());
     }
 
-    public Optional<Node> getBefore(int start, int end, long val) {
-      return Optional.empty();
+    public Node getBefore(int start, int end, long val) {
+      return null;
     }
 
     public Node getOverlap(int start, int end, long val) {
       return new Node(start, end, val);
     }
 
-    public Optional<Node> getAfter(int start, int end, long val) {
-      return Optional.empty();
+    public Node getAfter(int start, int end, long val) {
+      return null;
+    }
+
+    public void copy(Node copy) {
+      this.start = copy.start;
+      this.end = copy.end;
+      this.value = copy.value;
     }
   }
 
