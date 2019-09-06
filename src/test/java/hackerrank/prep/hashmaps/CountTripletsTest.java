@@ -1,4 +1,4 @@
-package hackerrank.prep.hashMaps;
+package hackerrank.prep.hashmaps;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +21,6 @@ class CountTripletsTest {
 
   @Test
   public void test3(){
-    assertEquals(161700, CountTriplets.countTriplets(Stream.generate(()->1L).limit(5).collect(Collectors.toList()), 1));
+    assertEquals(10, CountTriplets.countTriplets(Stream.generate(()->1L).limit(5).collect(Collectors.toList()), 1));
   }
 }
