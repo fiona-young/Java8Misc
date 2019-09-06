@@ -1,95 +1,51 @@
 package hackerrank.prep.arrays;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class ArrayManipulation {
 
   long arrayManipulation(int n, int[][] queries) {
-
-    Node head = null;
+    List<Point> startList = new ArrayList<>();
+    List<Point> endList = new ArrayList<>();
     for(int[] intSet: queries){
-      int start = intSet[0];
-      int end = intSet[1];
-      long val = (long)intSet[2];
-      if(head == null){
-        head = new Node(start, end, val);
-      }else if(end < head.start){
-        head = new Node(start, end, val, head);
-      }else{
-        Node current = head;
-        while(start > current.end) {
-          if (current.next == null) {
-            Node node = new Node(start, end, val, head);
-            current.next = node;
-            current = node;
-          }
-          current = current.next;
-        }
-        Node nextNode = current.next;
-        Node before = current.getBefore(start, end, val);
-        Node overlap = current.getOverlap(start, end, val);
-        Node after = current.getAfter(start, end, val);
-        if(before == null){
-          current.copy(overlap);
-        }else{
-          current.copy(before);
-          current.next = overlap;
-        }
-        if(after == null){
-          overlap.next = nextNode;
-        }else{
-          overlap.next = after;
-          after.next = nextNode;
-        }
-        }
-
+      startList.add(new Point(intSet[0], intSet[2]));
+      endList.add(new Point(intSet[1], intSet[2]));
     }
-    return 5;
+    startList.sort(Comparator.comparing(p -> p.position));
+    endList.sort(Comparator.comparing(p -> p.position));
+    if(startList.isEmpty()){
+      return 0;
+    }
+    long value = 0;
+    long valueMax = 0;
+    int startIndex = 0;
+    int endIndex = 0;
+    while(endIndex < endList.size()) {
+      if ((startIndex < startList.size()) && (startList.get(startIndex).position <= endList.get(endIndex).position)) {
+        value += startList.get(startIndex).value;
+        if(value > valueMax){
+          valueMax=value;
+        }
+        startIndex++;
 
+      }
+      if ((endIndex < endList.size()) && (startIndex >= endList.size() || startList.get(startIndex).position > endList.get(endIndex).position)) {
+        value -= endList.get(endIndex).value;
+        endIndex++;
+      }
+    }
+    return valueMax;
   }
-  class Node{
-    private Node next;
-    private int start;
-    private int end;
-    private long value;
-    public Node(int start, int end, long value) {
-      this.start = start;
-      this.end = end;
+
+  class Point {
+    private Integer position;
+    private int value;
+
+    public Point(Integer position, int value) {
+      this.position = position;
       this.value = value;
-    }
-
-    public Node(int start, int end, long value, Node next) {
-      this.start = start;
-      this.end = end;
-      this.value = value;
-      this.next = next;
-    }
-
-    public boolean endsSame() {
-      return start == end;
-    }
-
-    @Override
-    public String toString() {
-      return String.format("%s:%s=%s%s",start,end,value,next==null?"":" "+next.toString());
-    }
-
-    public Node getBefore(int start, int end, long val) {
-      return null;
-    }
-
-    public Node getOverlap(int start, int end, long val) {
-      return new Node(start, end, val);
-    }
-
-    public Node getAfter(int start, int end, long val) {
-      return null;
-    }
-
-    public void copy(Node copy) {
-      this.start = copy.start;
-      this.end = copy.end;
-      this.value = copy.value;
     }
   }
 
